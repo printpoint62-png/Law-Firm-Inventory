@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10233f">
+  <title>Sign In | Law Firm Inventory</title>
+  <style>
+    :root {
+      --navy: #10233f;
+      --navy-light: #19385e;
+      --gold: #c9a96e;
+      --bg: #f3f5f8;
+      --text: #18263b;
+      --muted: #6b7788;
+      --border: #dce2ea;
+      --danger: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .brand-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(ellipse at 15% 85%, #254b70 0, transparent 45%),
+        linear-gradient(145deg, var(--navy), #091629);
+    }
+
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      right: -190px;
+      top: 20%;
+      border: 1px solid rgba(201,169,110,.22);
+      border-radius: 50%;
+      box-shadow: 0 0 0 45px rgba(201,169,110,.04),
+                  0 0 0 90px rgba(201,169,110,.03);
+      pointer-events: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 22px;
+      font-family: Georgia, serif;
+    }
+
+    .brand-name {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      letter-spacing: .5px;
+    }
+
+    .brand-subtitle {
+      margin-top: 5px;
+      color: #c3ccda;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .brand-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 490px;
+      margin: 70px 0;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-copy h1 {
+      margin: 22px 0;
+      font: 48px/1.15 Georgia, "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    .brand-copy p {
+      max-width: 400px;
+      color: #c4cedc;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .brand-footer {
+      position: relative;
+      z-index: 1;
+      color: #aab7c8;
+      font-size: 12px;
+    }
+
+    .login-panel {
+      display: grid;
+      place-items: center;
+      padding: 36px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .mobile-brand { display: none; }
+
+    .login-card h2 {
+      margin: 0 0 10px;
+      font: 36px Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      color: var(--navy);
+    }
+
+    .intro {
+      margin: 0 0 34px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .field { margin-bottom: 22px; }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      color: #27364a;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 49px;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--navy-light);
+      box-shadow: 0 0 0 3px rgba(25,56,94,.09);
+    }
+
+    .password-wrap { position: relative; }
+
+    .password-wrap input { padding-right: 76px; }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--navy-light);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .login-button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 7px;
+      border: 0;
+      border-radius: 5px;
+      background: var(--navy);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+
+    .login-button:hover {
+      background: var(--navy-light);
+    }
+
+    .login-button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .message {
+      display: none;
+      margin: 0 0 20px;
+      padding: 12px 14px;
+      border-radius: 5px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      color: var(--danger);
+      background: #fff0ef;
+      border: 1px solid #ffd3cf;
+    }
+
+    .message.success {
+      display: block;
+      color: #17663a;
+      background: #eaf8ef;
+      border: 1px solid #bce7ca;
+    }
+
+    .security-note {
+      margin-top: 25px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    @media (max-width: 800px) {
+      body { grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .login-panel { padding: 28px 22px; }
+      .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 44px;
+      }
+      .mobile-brand .brand-name { color: var(--navy); }
+      .mobile-brand .brand-subtitle { color: var(--muted); }
+      .login-card h2 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="brand-panel">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-name">Law Firm Inventory</div>
+        <div class="brand-subtitle">Resource Management</div>
+      </div>
+    </div>
+
+    <div class="brand-copy">
+      <div class="eyebrow">Organised. Accountable. Secure.</div>
+      <h1>Every resource.<br>Under control.</h1>
+      <p>
+        Manage inventory, monitor stock movements and maintain
+        accountable records across clients, files and firm operations.
+      </p>
+    </div>
+
+    <div class="brand-footer">
+      Internal access only · Authorised personnel
+    </div>
+  </aside>
+
+  <main class="login-panel">
+    <section class="login-card">
+      <div class="mobile-brand">
+        <div class="brand-mark" style="background:#10233f">L</div>
+        <div>
+          <div class="brand-name">Law Firm Inventory</div>
+          <div class="brand-subtitle">Resource Management</div>
+        </div>
+      </div>
+
+      <h2>Welcome back</h2>
+      <p class="intro">
+        Sign in with your authorised account to access the inventory
+        management system.
+      </p>
+
+      <div id="message" class="message" role="alert" aria-live="polite"></div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            maxlength="255"
+            placeholder="you@lawfirm.com"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              maxlength="128"
+              placeholder="Enter your password"
+              required
+            >
+            <button
+              class="toggle-password"
+              id="togglePassword"
+              type="button"
+              aria-label="Show password"
+            >Show</button>
+          </div>
+        </div>
+
+        <button class="login-button" id="loginButton" type="submit">
+          Sign in securely
+        </button>
+      </form>
+
+      <p class="security-note">
+        Restricted to authorised Admin, HR and Staff accounts.
+        Never share your password with anyone.
+      </p>
+    </section>
+  </main>
+
+
+    <script src="/js/login.js" defer></script>
+  
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <title>Products Master | Law Firm Inventory</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f5f9;
+      color: #172033;
+    }
+
+    .topbar {
+      min-height: 76px;
+      padding: 18px 6%;
+      background: #101827;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand { font-size: 21px; font-weight: 700; }
+    .brand span { color: #63d6b0; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button, a { font: inherit; }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 40px;
+      padding: 10px 15px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .button-primary { background: #087a63; color: #fff; }
+    .button-primary:hover { background: #06644f; }
+
+    .button-secondary {
+      background: #fff;
+      border-color: #d0d5dd;
+      color: #344054;
+    }
+
+    .button-secondary:hover { background: #f8fafc; }
+
+    .button-danger {
+      background: #fff;
+      color: #b42318;
+      border-color: #f0b7b2;
+    }
+
+    .button-danger:hover { background: #fff1f0; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    main {
+      width: min(1250px, 92%);
+      margin: 36px auto;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    h1 { margin: 0 0 9px; font-size: clamp(27px, 4vw, 35px); }
+    .subtitle { margin: 0; color: #667085; line-height: 1.6; }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #e4e8ef;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 28px rgba(16, 24, 39, 0.04);
+    }
+
+    .panel h2 { margin: 0 0 20px; font-size: 19px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field { min-width: 0; }
+    .field-full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .required { color: #b42318; }
+
+    input, textarea, select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: #fff;
+      color: #172033;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea { min-height: 95px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #087a63;
+      box-shadow: 0 0 0 3px rgba(8, 122, 99, 0.12);
+    }
+
+    .field-help {
+      display: block;
+      margin-top: 6px;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* Inline Add buttons for Category, Brand and Unit */
+    .select-with-action {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .select-with-action select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .button-add-option {
+      flex: 0 0 44px;
+      width: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border: 1px solid #a7e3cd;
+      border-radius: 8px;
+      background: #eaf8f1;
+      color: #087a63;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .button-add-option:hover {
+      background: #d5f3e6;
+      border-color: #63c9a6;
+    }
+
+    .button-add-option:focus-visible {
+      outline: 3px solid rgba(8, 122, 99, 0.2);
+      outline-offset: 2px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .message {
+      display: none;
+      margin: 16px 0 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.success { display: block; background: #eaf8f1; color: #067647; }
+    .message.error { display: block; background: #fff1f0; color: #b42318; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(200px, 1fr) 180px auto;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #eaecf0;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 14px 15px;
+      border-bottom: 1px solid #eaecf0;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475467;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+    .product-name { font-weight: 700; color: #172033; }
+    .product-sku { margin-top: 4px; color: #667085; font-size: 12px; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-active { background: #e4f8f0; color: #087a55; }
+    .status-inactive { background: #f2f4f7; color: #475467; }
+
+    .row-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+    .row-actions .button { min-height: 34px; padding: 7px 10px; font-size: 12px; }
+
+    .empty-state { text-align: center; color: #667085; padding: 30px 16px; }
+
+    .list-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 700px) {
+      .topbar { padding: 16px 4%; }
+      main { width: 94%; margin: 25px auto; }
+      .panel { padding: 17px; }
+      .form-grid, .toolbar { grid-template-columns: 1fr; }
+      .field-full { grid-column: auto; }
+    }
+
+    @media (max-width: 380px) {
+      .select-with-action { gap: 6px; }
+      .button-add-option {
+        flex-basis: 42px;
+        width: 42px;
+        min-width: 42px;
+      }
+    }
+  </style>
+
+  <script src="/js/products.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">Law Firm <span>Inventory</span></div>
+    <nav class="nav-actions" aria-label="Main navigation">
+      <a class="button button-secondary" href="/dashboard.html">Dashboard</a>
+      <button class="button button-secondary" id="logoutButton" type="button">Sign out</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-heading">
+      <div>
+        <h1>Products Master</h1>
+        <p class="subtitle">Manage product details, units, categories, brands and reorder levels.</p>
+      </div>
+      <button class="button button-primary" id="newProductButton" type="button">+ Add Product</button>
+    </section>
+
+    <section class="panel hidden" id="productFormPanel" aria-labelledby="formHeading">
+      <h2 id="formHeading">Add New Product</h2>
+
+      <form id="productForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="sku">SKU <span class="required">*</span></label>
+            <input id="sku" name="sku" type="text" maxlength="80" autocomplete="off" required>
+            <span class="field-help">Unique product code. It cannot be duplicated.</span>
+          </div>
+
+          <div class="field">
+            <label for="productName">Product Name <span class="required">*</span></label>
+            <input id="productName" name="name" type="text" maxlength="200" required>
+          </div>
+
+          <div class="field">
+            <label for="categoryId">Category</label>
+            <div class="select-with-action">
+              <select id="categoryId" name="category_id">
+                <option value="">No category</option>
+              </select>
+              <button
+                class="button button-add-option"
+                id="addCategoryButton"
+                type="button"
+                title="Add category"
+                aria-label="Add category"
+              >+</button>
+            </div>
+            <span class="field-help">Choose an existing category or add a new one.</span>
+          </div>
+
+          <div class="field">
+            <label for="brandId">Brand</label>
+            <div class="select-with-action">
+              <select id="brandId" name="brand_id">
+                <option value="">No brand</option>
+              </select>
+              <button
+                class="button button-add-option"
+                id="addBrandButton"
+                type="button"
+                title="Add brand"
+                aria-label="Add brand"
+              >+</button>
+            </div>
+            <span class="field-help">Choose an existing brand or add a new one.</span>
+          </div>
+
+          <div class="field">
+            <label for="unitId">Unit <span class="required">*</span></label>
+            <div class="select-with-action">
+              <select id="unitId" name="unit_id" required>
+                <option value="">Select unit</option>
+              </select>
+              <button
+                class="button button-add-option"
+                id="addUnitButton"
+                type="button"
+                title="Add unit"
+                aria-label="Add unit"
+              >+</button>
+            </div>
+            <span class="field-help">Unit name and abbreviation are required.</span>
+          </div>
+
+          <div class="field">
+            <label for="reorderLevel">Reorder Level <span class="required">*</span></label>
+            <input id="reorderLevel" name="reorder_level" type="number" min="0" max="99999999999.999" step="0.001" value="0" required>
+            <span class="field-help">Low-stock threshold; this does not set current stock.</span>
+          </div>
+
+          <div class="field field-full">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" maxlength="10000"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-primary" id="saveProductButton" type="submit">Save Product</button>
+          <button class="button button-secondary" id="cancelFormButton" type="button">Cancel</button>
+        </div>
+
+        <p class="message" id="formMessage" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="productListHeading">
+      <h2 id="productListHeading">Product Directory</h2>
+
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Search SKU, name, category, brand..." aria-label="Search products" maxlength="200">
+
+        <select id="statusFilter" aria-label="Filter products by status">
+          <option value="all">All products</option>
+          <option value="active">Active only</option>
+          <option value="inactive">Inactive only</option>
+        </select>
+
+        <button class="button button-secondary" id="refreshButton" type="button">Refresh List</button>
+      </div>
+
+      <p class="message" id="listMessage" role="status" aria-live="polite"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product / SKU</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Unit</th>
+              <th>Reorder Level</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <tr><td class="empty-state" colspan="7">Loading products...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="list-footer">
+        <span id="productCount">Loading product count...</span>
+        <span>Maximum 200 records displayed per request.</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

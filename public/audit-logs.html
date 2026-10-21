@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Logs | Law Firm Inventory</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .audit-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .audit-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .audit-toolbar input,
+    .audit-toolbar select,
+    .audit-toolbar button {
+      padding: 10px 12px;
+      border: 1px solid #d5dce5;
+      border-radius: 8px;
+      background: #fff;
+      font: inherit;
+    }
+
+    .audit-toolbar input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .audit-table-wrap {
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    .audit-table th,
+    .audit-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edf0f4;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .audit-table th {
+      background: #f3f6fa;
+      color: #344256;
+      white-space: nowrap;
+    }
+
+    .audit-action {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #e8eef8;
+      color: #234a7b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .audit-details {
+      max-width: 340px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 12px;
+    }
+
+    .audit-message {
+      margin: 12px 0;
+    }
+
+    @media (max-width: 600px) {
+      .audit-page {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="audit-page">
+    <h1>Audit Logs</h1>
+    <p>Review administrative activity and changes made in the inventory system.</p>
+
+    <div class="audit-toolbar">
+      <input
+        id="auditSearch"
+        type="search"
+        maxlength="100"
+        placeholder="Search user, action, entity or ID"
+        aria-label="Search audit logs"
+      >
+
+      <select id="auditAction" aria-label="Filter by action">
+        <option value="">All actions</option>
+        <option value="CREATE">Create</option>
+        <option value="UPDATE">Update</option>
+        <option value="ACTIVATE">Activate</option>
+        <option value="DEACTIVATE">Deactivate</option>
+        <option value="DELETE">Delete</option>
+      </select>
+
+      <select id="auditEntity" aria-label="Filter by entity">
+        <option value="">All entities</option>
+        <option value="product">Product</option>
+        <option value="client">Client</option>
+        <option value="file">File</option>
+        <option value="purchase">Purchase</option>
+        <option value="consumption">Consumption</option>
+        <option value="vendor">Vendor</option>
+      </select>
+
+      <button id="auditApply" type="button">Apply Filters</button>
+      <button id="auditReset" type="button">Reset</button>
+    </div>
+
+    <p id="auditMessage" class="audit-message" role="status" aria-live="polite"></p>
+
+    <div class="audit-table-wrap">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>Entity ID</th>
+            <th>Previous Values</th>
+            <th>New Values</th>
+          </tr>
+        </thead>
+        <tbody id="auditTableBody">
+          <tr><td colspan="7">Loading audit logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/js/audit-logs.js" defer></script>
+</body>
+</html>

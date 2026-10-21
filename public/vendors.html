@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendors | Law Firm Inventory</title>
+  <style>
+    :root {
+      --primary: #243b64;
+      --primary-hover: #192d4e;
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --text: #202b3c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --success: #16794b;
+      --danger: #b42318;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      min-height: 66px;
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 7px;
+      font-size: 27px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle { color: var(--muted); margin: 0; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(24, 39, 75, 0.035);
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    h2 { margin: 0; font-size: 17px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label { font-weight: 600; font-size: 13px; }
+
+    .required { color: var(--danger); }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 11px 12px;
+      color: var(--text);
+      background: white;
+      border: 1px solid #d5dce7;
+      border-radius: 8px;
+      outline: none;
+      min-height: 42px;
+    }
+
+    textarea { min-height: 82px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #526fa4;
+      box-shadow: 0 0 0 3px rgba(36, 59, 100, 0.09);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      min-height: 40px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-weight: 600;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: white; color: var(--text); border-color: var(--border); }
+    .btn-secondary:hover { background: #f8fafc; }
+    .btn-small { min-height: 32px; padding: 7px 10px; font-size: 12px; }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .search-wrap { flex: 1 1 280px; }
+    .filter-wrap { flex: 0 1 180px; }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 930px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #536176;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fafcff; }
+
+    .vendor-name { font-weight: 650; }
+    .secondary-text { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .status-active { color: var(--success); background: #e8f7ee; }
+    .status-inactive { color: #64748b; background: #edf0f4; }
+
+    .table-actions { display: flex; gap: 7px; }
+
+    .message {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
+    .message.success { display: block; background: #e8f7ee; color: #166534; }
+    .message.error { display: block; background: #fff0ef; color: #a61b1b; }
+    .message.info { display: block; background: #eef4ff; color: #244a86; }
+
+    .empty-state {
+      padding: 36px 16px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 800px) {
+      .page { padding: 18px 14px; }
+      .topbar { padding: 15px 16px; }
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .panel { padding: 16px; }
+    }
+
+    @media (max-width: 520px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      h1 { font-size: 23px; }
+      .page-heading .btn { width: 100%; }
+      .filter-wrap { flex: 1 1 130px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      Law Firm Inventory
+      <small>Inventory &amp; Operations Management</small>
+    </div>
+    <a href="/dashboard.html" style="color:#243b64;text-decoration:none;font-weight:600">
+      ← Back to Dashboard
+    </a>
+  </header>
+
+  <main class="page">
+    <section class="page-heading">
+      <div>
+        <h1>Vendors</h1>
+        <p class="subtitle">Manage suppliers and their contact information.</p>
+      </div>
+      <button type="button" class="btn btn-primary" id="addVendorBtn">
+        + Add Vendor
+      </button>
+    </section>
+
+    <div id="pageMessage" class="message" role="status" aria-live="polite"></div>
+
+    <section class="panel hidden" id="vendorFormPanel">
+      <div class="panel-heading">
+        <h2 id="formTitle">Add New Vendor</h2>
+      </div>
+
+      <form id="vendorForm">
+        <input type="hidden" id="vendorId">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="vendorCode">Vendor Code <span class="required">*</span></label>
+            <input id="vendorCode" name="vendor_code" maxlength="40"
+                   required autocomplete="off" placeholder="e.g. VEN-001">
+          </div>
+
+          <div class="field">
+            <label for="vendorName">Vendor Name <span class="required">*</span></label>
+            <input id="vendorName" name="name" maxlength="200"
+                   required autocomplete="organization" placeholder="Enter vendor name">
+          </div>
+
+          <div class="field">
+            <label for="contactPerson">Contact Person</label>
+            <input id="contactPerson" name="contact_person" maxlength="150"
+                   autocomplete="name" placeholder="Contact person name">
+          </div>
+
+          <div class="field">
+            <label for="vendorEmail">Email</label>
+            <input id="vendorEmail" name="email" type="email" maxlength="255"
+                   autocomplete="email" placeholder="vendor@example.com">
+          </div>
+
+          <div class="field">
+            <label for="vendorPhone">Phone</label>
+            <input id="vendorPhone" name="phone" type="tel" maxlength="20"
+                   autocomplete="tel" placeholder="Contact number">
+          </div>
+
+          <div class="field">
+            <label for="taxNumber">Tax Number / GSTIN</label>
+            <input id="taxNumber" name="tax_number" maxlength="50"
+                   autocomplete="off" placeholder="Enter tax registration number">
+          </div>
+
+          <div class="field full">
+            <label for="vendorAddress">Address</label>
+            <textarea id="vendorAddress" name="address"
+                      placeholder="Vendor's business address"></textarea>
+          </div>
+
+          <div class="field full">
+            <label for="vendorNotes">Notes</label>
+            <textarea id="vendorNotes" name="notes"
+                      placeholder="Optional internal notes"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelVendorBtn">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="saveVendorBtn">
+            Save Vendor
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Vendor Directory</h2>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input id="vendorSearch" type="search"
+                 placeholder="Search code, name, contact, email or phone..."
+                 aria-label="Search vendors">
+        </div>
+
+        <div class="filter-wrap">
+          <select id="vendorStatusFilter" aria-label="Filter vendors by status">
+            <option value="all">All Vendors</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="refreshVendorsBtn">
+          Refresh
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Vendor Code</th>
+              <th>Contact</th>
+              <th>Phone / Email</th>
+              <th>Tax Number</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="vendorsTableBody">
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">Vendor records will appear here.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span id="vendorCount">0 vendors</span>
+        <span>Vendor records are maintained in the central database.</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/vendors.js" defer></script>
+</body>
+</html>

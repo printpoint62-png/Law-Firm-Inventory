@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Consumption | Law Firm Inventory</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    :root {
+      --primary: #173b68;
+      --primary-light: #eaf1fa;
+      --border: #e1e7ef;
+      --text: #1f2937;
+      --muted: #64748b;
+      --bg: #f5f7fb;
+      --success: #087443;
+      --danger: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .page { max-width: 1440px; margin: auto; padding: 28px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 26px;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    h2 { font-size: 19px; margin: 0 0 20px; }
+    .subtitle { color: var(--muted); margin: 0; }
+
+    .button {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 11px 16px; border: 0; border-radius: 8px;
+      font-weight: 600; text-decoration: none; cursor: pointer; font-size: 14px;
+    }
+    .primary { background: var(--primary); color: white; }
+    .secondary { background: var(--primary-light); color: var(--primary); }
+    .danger-button { background: #fff0ef; color: var(--danger); }
+    .button:disabled { opacity: .6; cursor: wait; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
+      gap: 22px; align-items: start;
+    }
+    .panel {
+      background: white; border: 1px solid var(--border); border-radius: 13px;
+      padding: 23px; margin-bottom: 22px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .035); min-width: 0;
+    }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+
+    input, select, textarea {
+      width: 100%; border: 1px solid #cbd5e1; border-radius: 8px;
+      padding: 11px 12px; font: inherit; font-size: 14px;
+      background: white; color: var(--text);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #b9d0f2; border-color: var(--primary);
+    }
+
+    .message {
+      display: none; padding: 12px 14px; border-radius: 8px;
+      margin-bottom: 16px; font-size: 14px; overflow-wrap: anywhere;
+    }
+    .message.show { display: block; }
+    .message.success { background: #e9f8ef; color: var(--success); }
+    .message.error { background: #fff0ef; color: var(--danger); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td {
+      padding: 13px 12px; text-align: left;
+      border-bottom: 1px solid #edf0f5; white-space: nowrap;
+    }
+    th { background: #f8fafc; color: #475569; font-weight: 700; }
+    tbody tr:hover { background: #fafcff; }
+
+    .muted { color: var(--muted); }
+    .toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+      margin-bottom: 15px;
+    }
+    .toolbar input, .toolbar select { width: auto; min-width: 150px; flex: 1; }
+    .empty { text-align: center; padding: 25px; color: var(--muted); }
+
+    .products-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .products-heading label { margin: 0; }
+    .product-row {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; margin-bottom: 12px; background: #fbfcfe;
+    }
+    .product-row-top {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .product-row-title { font-size: 13px; font-weight: 700; }
+    .product-row-fields {
+      display: grid; grid-template-columns: minmax(0, 1fr) 105px;
+      gap: 10px; align-items: start;
+    }
+    .product-row .field { margin-bottom: 8px; min-width: 0; }
+    .product-row small { display: block; margin-top: 6px; font-size: 12px; }
+    .remove-product { padding: 7px 10px; font-size: 12px; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .page { padding: 16px; }
+    }
+    @media (max-width: 420px) {
+      .product-row-fields { grid-template-columns: minmax(0, 1fr) 90px; }
+      .panel { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>Stock Consumption</h1>
+        <p class="subtitle">Manage stock issues and track material consumption.</p>
+      </div>
+      <a class="button secondary" href="/dashboard.html">← Dashboard</a>
+    </header>
+
+    <div id="pageMessage" class="message" role="status" aria-live="polite"></div>
+
+    <div class="grid">
+      <section class="panel" id="issuePanel">
+        <h2>Issue Stock</h2>
+        <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+
+        <form id="issueForm">
+          <div class="products-heading">
+            <label>Products and quantities *</label>
+            <button id="addProductButton" class="button secondary" type="button">
+              + Add product
+            </button>
+          </div>
+
+          <div id="productRows"></div>
+          <p class="muted" style="font-size:12px;margin:0 0 18px">
+            Add each product once and enter its quantity. Available stock is shown for each product.
+          </p>
+
+          <div class="field">
+            <label for="issuedTo">Issue to Staff *</label>
+            <select id="issuedTo" required>
+              <option value="">Loading staff...</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="clientId">Client *</label>
+            <select id="clientId" required>
+              <option value="">Loading clients...</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="fileId">File / Matter *</label>
+            <select id="fileId" required disabled>
+              <option value="">Select a client first</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="referenceNumber">Reference Number</label>
+            <input id="referenceNumber" maxlength="100" placeholder="Optional, e.g. ISSUE-001">
+          </div>
+
+          <div class="field">
+            <label for="notes">Notes</label>
+            <textarea id="notes" maxlength="2000" placeholder="Purpose or additional details"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button id="issueButton" class="button primary" type="submit">Issue Stock</button>
+          </div>
+        </form>
+      </section>
+
+      <div>
+        <section class="panel">
+          <h2>Current Stock</h2>
+          <div class="toolbar">
+            <input id="stockSearch" type="search" placeholder="Search name or SKU">
+            <button id="refreshStock" class="button secondary" type="button">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>SKU</th><th>Product</th><th>Available</th>
+                  <th>Avg. Unit Cost</th><th>Stock Value</th>
+                </tr>
+              </thead>
+              <tbody id="stockBody">
+                <tr><td colspan="5" class="empty">Loading stock...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Consumption History</h2>
+          <div class="toolbar">
+            <input id="historySearch" type="search" placeholder="Search transaction, product, staff or file">
+            <button id="refreshHistory" class="button secondary" type="button">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th><th>Transaction</th><th>Product</th><th>Quantity</th>
+                  <th>Issued To</th><th>Client / File</th><th>Total Cost</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody">
+                <tr><td colspan="7" class="empty">Loading consumption history...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="/js/consumption.js" defer></script>
+</body>
+</html>

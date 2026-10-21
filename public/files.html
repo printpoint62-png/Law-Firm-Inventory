@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Files Master | Law Firm Inventory</title>
+  <style>
+    :root {
+      --navy: #101827;
+      --green: #087a63;
+      --mint: #63d6b0;
+      --bg: #f4f7fb;
+      --text: #182230;
+      --muted: #667085;
+      --border: #e3e8ef;
+      --red: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .topbar {
+      background: var(--navy);
+      color: white;
+      padding: 16px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand { font-size: 19px; font-weight: 700; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-links a, .nav-links button {
+      color: white;
+      text-decoration: none;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    main {
+      width: min(1440px, 92%);
+      margin: 30px auto;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    h2 { margin: 0 0 20px; font-size: 19px; }
+
+    .subtitle { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 3px 14px rgba(16, 24, 39, 0.035);
+    }
+
+    .hidden { display: none !important; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .field.full-width { grid-column: 1 / -1; }
+
+    label { font-size: 13px; font-weight: 700; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #cfd6e0;
+      border-radius: 8px;
+      color: var(--text);
+      background: white;
+      min-height: 43px;
+    }
+
+    textarea { resize: vertical; min-height: 95px; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid rgba(8, 122, 99, 0.17);
+      border-color: var(--green);
+    }
+
+    input[readonly] {
+      background: #f2f5f8;
+      color: #475467;
+    }
+
+    .form-actions, .toolbar, .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions { margin-top: 22px; }
+
+    .button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 15px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 40px;
+    }
+
+    .button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .button-primary { background: var(--green); color: white; }
+    .button-secondary { background: #eef2f6; color: #344054; }
+    .button-danger { background: #fff0ef; color: var(--red); }
+
+    .toolbar { margin-bottom: 18px; }
+    .toolbar input { flex: 1 1 240px; }
+    .toolbar select { flex: 0 1 190px; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475467;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+    }
+
+    .file-name { font-weight: 700; margin-bottom: 5px; }
+    .file-number { color: var(--muted); font-size: 12px; }
+
+    .status-badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-active { background: #e8f7ef; color: #067647; }
+    .status-closed { background: #eef2f6; color: #475467; }
+    .status-archived { background: #fff3e8; color: #b54708; }
+
+    .message { font-size: 13px; margin: 12px 0 0; }
+    .message:empty { display: none; }
+    .message.error { color: var(--red); }
+    .message.success { color: var(--green); }
+    .empty-state { text-align: center; color: var(--muted); padding: 28px; }
+    .count { color: var(--muted); font-size: 13px; margin-top: 14px; }
+
+    .lookup-result {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 8px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 700px) {
+      main { width: 94%; margin: 20px auto; }
+      .panel { padding: 17px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full-width { grid-column: auto; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+  <script src="/js/files.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Law Firm Inventory</div>
+    <nav class="nav-links">
+      <a href="/dashboard.html">Dashboard</a>
+      <button id="logoutButton" type="button">Sign out</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-heading">
+      <div>
+        <h1>Files Master</h1>
+        <p class="subtitle">Manage client files, case references and file status.</p>
+      </div>
+      <button id="newFileButton" class="button button-primary" type="button">
+        + Add File
+      </button>
+    </section>
+
+    <section id="fileFormPanel" class="panel hidden">
+      <h2 id="formHeading">Add New File</h2>
+
+      <form id="fileForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="clientId">Client *</label>
+            <select id="clientId" name="client_id" required>
+              <option value="">Loading clients...</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="fileNumber">File Number *</label>
+            <input id="fileNumber" name="file_number"
+              maxlength="80" required autocomplete="off"
+              placeholder="e.g. CASE-2026-001">
+          </div>
+
+          <div class="field full-width">
+            <label for="clientDisplay">Selected Client</label>
+            <input id="clientDisplay" type="text" readonly
+              placeholder="Client name will appear here">
+          </div>
+
+          <div class="field full-width">
+            <label for="fileTitle">File Title *</label>
+            <input id="fileTitle" name="title" maxlength="250" required
+              placeholder="Enter file or case title">
+          </div>
+
+          <div class="field">
+            <label for="openedAt">Opened Date</label>
+            <input id="openedAt" name="opened_at" type="date">
+          </div>
+
+          <div class="field">
+            <label for="closedAt">Closed Date</label>
+            <input id="closedAt" name="closed_at" type="date">
+          </div>
+
+          <div class="field full-width">
+            <label for="fileDescription">Description</label>
+            <textarea id="fileDescription" name="description"
+              maxlength="10000" placeholder="Optional file details"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="saveFileButton" class="button button-primary" type="submit">
+            Save File
+          </button>
+          <button id="cancelFormButton" class="button button-secondary" type="button">
+            Cancel
+          </button>
+        </div>
+
+        <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>File Directory</h2>
+
+      <div class="toolbar">
+        <input id="searchInput" type="search"
+          placeholder="Search file number, title or client..."
+          aria-label="Search files">
+        <select id="statusFilter" aria-label="Filter files by status">
+          <option value="all">All statuses</option>
+          <option value="Active">Active only</option>
+          <option value="Closed">Closed only</option>
+          <option value="Archived">Archived only</option>
+        </select>
+        <button id="refreshButton" class="button button-secondary" type="button">
+          Refresh List
+        </button>
+      </div>
+
+      <p id="listMessage" class="message" role="status" aria-live="polite"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Client</th>
+              <th>Opened</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="filesTableBody">
+            <tr>
+              <td colspan="6" class="empty-state">Loading files...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="fileCount" class="count">0 files displayed</div>
+      <p class="count">Maximum 200 records displayed per request.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Find File by Number</h2>
+      <form id="lookupForm" class="toolbar">
+        <input id="lookupFileNumber" maxlength="80" required
+          placeholder="Enter exact file number" aria-label="File number lookup">
+        <button id="lookupButton" class="button button-primary" type="submit">
+          Find File
+        </button>
+      </form>
+      <p id="lookupMessage" class="message" role="status" aria-live="polite"></p>
+      <div id="lookupResult" class="lookup-result hidden"></div>
+    </section>
+  </main>
+</body>
+</html>

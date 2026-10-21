@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Ledger | Law Firm Inventory</title>
+  <style>
+    :root {
+      --primary: #173b57;
+      --primary-light: #eaf1f7;
+      --background: #f4f7fb;
+      --surface: #ffffff;
+      --text: #182433;
+      --muted: #697789;
+      --border: #e1e7ef;
+      --green: #16845b;
+      --red: #c24141;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--primary);
+      color: white;
+      padding: 19px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand { font-size: 19px; font-weight: 700; }
+    .topbar a { color: white; text-decoration: none; opacity: .9; }
+
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .subtitle { color: var(--muted); margin: 0; font-size: 14px; }
+
+    .button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      padding: 11px 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .button.secondary {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--primary);
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 12px; color: var(--muted); font-weight: 700; }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: white;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table-heading {
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .table-heading h2 { font-size: 16px; margin: 0; }
+    #resultCount { color: var(--muted); font-size: 13px; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1250px;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #536275;
+      text-align: left;
+      padding: 13px 14px;
+      white-space: nowrap;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+    }
+
+    td {
+      padding: 14px;
+      border-top: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:hover { background: #fafcff; }
+
+    .product-name { font-weight: 700; }
+    .muted { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .number { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .positive { color: var(--green); font-weight: 700; }
+    .negative { color: var(--red); font-weight: 700; }
+
+    .movement {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: var(--primary-light);
+      color: var(--primary);
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .error { color: var(--red); }
+
+    .pagination {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pagination-controls { display: flex; gap: 8px; align-items: center; }
+    .pagination button:disabled { opacity: .45; cursor: not-allowed; }
+
+    @media (max-width: 900px) {
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .container { padding: 18px; }
+    }
+
+    @media (max-width: 520px) {
+      .filters { grid-template-columns: 1fr; }
+      h1 { font-size: 23px; }
+      .topbar, .container { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Law Firm Inventory</div>
+    <a href="/dashboard.html">← Back to Dashboard</a>
+  </header>
+
+  <main class="container">
+    <section class="heading">
+      <div>
+        <h1>Stock Ledger</h1>
+        <p class="subtitle">Track stock movements, references, recipients and running balances.</p>
+      </div>
+      <button class="button secondary" id="exportButton" type="button">Export CSV</button>
+    </section>
+
+    <form class="filters" id="filterForm">
+      <div class="field">
+        <label for="search">Search</label>
+        <input id="search" name="search" placeholder="Product, SKU, client, file...">
+      </div>
+
+      <div class="field">
+        <label for="movementType">Movement Type</label>
+        <select id="movementType" name="movement_type">
+          <option value="">All movements</option>
+          <option value="Opening">Opening</option>
+          <option value="Stock In">Stock In</option>
+          <option value="Stock Out">Stock Out</option>
+          <option value="Adjustment In">Adjustment In</option>
+          <option value="Adjustment Out">Adjustment Out</option>
+          <option value="Return In">Return In</option>
+          <option value="Return Out">Return Out</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="reference">Reference Number</label>
+        <input id="reference" name="reference_number" placeholder="Invoice or reference">
+      </div>
+
+      <div class="field">
+        <label for="fromDate">From Date</label>
+        <input id="fromDate" name="from" type="date">
+      </div>
+
+      <div class="field">
+        <label for="toDate">To Date</label>
+        <input id="toDate" name="to" type="date">
+      </div>
+
+      <div class="field">
+        <label for="pageSize">Rows per page</label>
+        <select id="pageSize">
+          <option value="25">25 rows</option>
+          <option value="50">50 rows</option>
+          <option value="100">100 rows</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="button" type="submit">Apply Filters</button>
+        <button class="button secondary" id="resetButton" type="button">Reset</button>
+      </div>
+    </form>
+
+    <section class="table-card">
+      <div class="table-heading">
+        <h2>Transaction History</h2>
+        <span id="resultCount">Loading transactions...</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Transaction</th>
+              <th>Product</th>
+              <th>Movement</th>
+              <th>Stock In</th>
+              <th>Stock Out</th>
+              <th>Balance After</th>
+              <th>Unit Cost</th>
+              <th>Client / File</th>
+              <th>Issued To</th>
+              <th>Created By</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerBody">
+            <tr><td colspan="11" class="status">Loading ledger...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span id="pageInfo">Page 1</span>
+        <div class="pagination-controls">
+          <button class="button secondary" id="prevButton" type="button" disabled>Previous</button>
+          <button class="button secondary" id="nextButton" type="button" disabled>Next</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/ledger.js" defer></script>
+</body>
+</html>

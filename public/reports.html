@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <title>Reports & Analytics | Law Firm Inventory</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f5f9;
+      color: #172033;
+    }
+
+    .topbar {
+      min-height: 76px;
+      padding: 18px 5%;
+      background: #101827;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand { font-size: 21px; font-weight: 700; }
+    .brand span { color: #63d6b0; }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-link, .logout-button {
+      display: inline-block;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .header-link {
+      border: 1px solid #526075;
+      color: #fff;
+    }
+
+    .logout-button {
+      border: 1px solid #526075;
+      background: transparent;
+      color: #fff;
+    }
+
+    .header-link:hover, .logout-button:hover { background: #273449; }
+
+    main {
+      width: min(1400px, 92%);
+      margin: 32px auto 50px;
+    }
+
+    .page-heading { margin-bottom: 24px; }
+
+    h1 {
+      font-size: clamp(27px, 4vw, 35px);
+      margin: 0 0 9px;
+    }
+
+    .muted {
+      color: #667085;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .filters, .panel {
+      background: #fff;
+      border: 1px solid #e4e8ef;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 28px rgba(16, 24, 39, .04);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      color: #172033;
+      background: #fff;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(99, 214, 176, .28);
+      border-color: #18876a;
+    }
+
+    .button {
+      min-height: 43px;
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .primary { background: #173b57; color: #fff; }
+    .primary:hover { background: #102c42; }
+    .secondary { background: #e4f8f0; color: #087a55; }
+    .secondary:hover { background: #d1f3e5; }
+    .button:disabled { opacity: .6; cursor: not-allowed; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #fff;
+      border: 1px solid #e4e8ef;
+      border-radius: 13px;
+      padding: 20px;
+      min-width: 0;
+      box-shadow: 0 8px 28px rgba(16, 24, 39, .04);
+    }
+
+    .stat-label {
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0 0 12px;
+    }
+
+    .stat-value {
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+      margin: 0;
+    }
+
+    .stat:nth-child(1) { border-top: 4px solid #18876a; }
+    .stat:nth-child(2) { border-top: 4px solid #d97706; }
+    .stat:nth-child(3) { border-top: 4px solid #173b57; }
+    .stat:nth-child(4) { border-top: 4px solid #64748b; }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h2 { margin: 0; font-size: 19px; }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #e4e8ef;
+      border-radius: 9px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: 13px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 14px;
+      border-bottom: 1px solid #eaecf0;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475467;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .number { text-align: right; white-space: nowrap; }
+    .empty { padding: 24px; text-align: center; color: #667085; }
+
+    .status {
+      padding: 12px 14px;
+      margin: 0 0 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      background: #eef4f8;
+      color: #344054;
+    }
+
+    .status.error {
+      background: #fef3f2;
+      color: #b42318;
+    }
+
+    .status.success {
+      background: #e4f8f0;
+      color: #087a55;
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      color: #667085;
+      font-size: 12px;
+      text-align: center;
+      padding: 8px 0 25px;
+    }
+
+    @media (max-width: 950px) {
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .topbar { padding: 16px 4%; }
+      main { width: 94%; margin-top: 24px; }
+      .stats-grid, .filters-grid { grid-template-columns: 1fr; }
+      .filters, .panel, .stat { padding: 17px; }
+      .button { width: 100%; }
+    }
+  </style>
+
+  <script src="/js/reports.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">Law Firm <span>Inventory</span></div>
+
+    <div class="header-actions">
+      <a class="header-link" href="/dashboard.html">Dashboard</a>
+      <button class="logout-button" id="logoutButton" type="button">
+        Sign out
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-heading">
+      <h1>Reports & Analytics</h1>
+      <p class="muted">
+        Review inventory movements, product consumption, client usage and file-wise costs.
+      </p>
+    </section>
+
+    <p id="statusMessage" class="status" role="status" aria-live="polite">
+      Loading reports...
+    </p>
+
+    <section class="filters">
+      <form id="filterForm" class="filters-grid">
+        <div>
+          <label for="startDate">From date</label>
+          <input id="startDate" name="startDate" type="date" required>
+        </div>
+
+        <div>
+          <label for="endDate">To date</label>
+          <input id="endDate" name="endDate" type="date" required>
+        </div>
+
+        <button class="button primary" id="applyFilters" type="submit">
+          Apply Filters
+        </button>
+
+        <button class="button secondary" id="exportButton" type="button">
+          Export CSV
+        </button>
+      </form>
+    </section>
+
+    <section class="stats-grid" aria-label="Report summary">
+      <article class="stat">
+        <p class="stat-label">Total Stock In</p>
+        <p class="stat-value" id="totalStockIn">—</p>
+      </article>
+
+      <article class="stat">
+        <p class="stat-label">Total Stock Out</p>
+        <p class="stat-value" id="totalStockOut">—</p>
+      </article>
+
+      <article class="stat">
+        <p class="stat-label">Transactions</p>
+        <p class="stat-value" id="transactionCount">—</p>
+      </article>
+
+      <article class="stat">
+        <p class="stat-label">Net Stock Value Change</p>
+        <p class="stat-value" id="netValueChange">—</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Product-wise Movement</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Unit</th>
+              <th class="number">Stock In</th>
+              <th class="number">Stock Out</th>
+              <th class="number">Consumption Cost</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody">
+            <tr><td colspan="6" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Client-wise Consumption</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th class="number">Transactions</th>
+              <th class="number">Quantity Issued</th>
+              <th class="number">Total Cost</th>
+            </tr>
+          </thead>
+          <tbody id="clientsBody">
+            <tr><td colspan="4" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>File-wise Consumption</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>File Number</th>
+              <th>File / Matter</th>
+              <th>Client</th>
+              <th class="number">Transactions</th>
+              <th class="number">Quantity Issued</th>
+              <th class="number">Total Cost</th>
+            </tr>
+          </thead>
+          <tbody id="filesBody">
+            <tr><td colspan="6" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Transaction Details</h2>
+        <span class="muted" id="movementCount">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Transaction</th>
+              <th>Movement</th>
+              <th>Product</th>
+              <th class="number">Quantity</th>
+              <th class="number">Unit Cost</th>
+              <th class="number">Total Cost</th>
+              <th>Client / File</th>
+              <th>Created By</th>
+            </tr>
+          </thead>
+          <tbody id="movementsBody">
+            <tr><td colspan="9" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Reports are generated from recorded inventory transactions. Report totals do not alter stock balances.
+    </footer>
+  </main>
+</body>
+</html>
